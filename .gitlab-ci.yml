@@ -1,0 +1,151 @@
+stages:
+  - lint
+  - build
+  - deploy:stg
+  - deploy:prd
+
+variables:
+  BUN_VERSION: "1.2"
+
+default:
+  image: oven/bun:${BUN_VERSION}
+
+# ─── LINT ────────────────────────────────────────────────
+
+lint:api:
+  stage: lint
+  script:
+    - cd apps/api && bun install --frozen-lockfile && bun run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+lint:user:
+  stage: lint
+  script:
+    - cd apps/user && bun install --frozen-lockfile && bun run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+lint:admin:
+  stage: lint
+  script:
+    - cd apps/admin && bun install --frozen-lockfile && bun run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ─── BUILD ───────────────────────────────────────────────
+
+build:api:
+  stage: build
+  script:
+    - cd apps/api && bun install --frozen-lockfile && bun run build
+  artifacts:
+    paths:
+      - apps/api/dist/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+
+build:user:
+  stage: build
+  script:
+    - cd apps/user && bun install --frozen-lockfile && bun run build
+  artifacts:
+    paths:
+      - apps/user/dist/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+
+build:admin:
+  stage: build
+  script:
+    - cd apps/admin && bun install --frozen-lockfile && bun run build
+  artifacts:
+    paths:
+      - apps/admin/dist/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+
+# ─── DEPLOY STG ──────────────────────────────────────────
+
+deploy:stg:user:
+  stage: deploy:stg
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:user
+  script:
+    - bash scripts/deploy-frontend.sh stg user
+  environment:
+    name: staging/user
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+deploy:stg:admin:
+  stage: deploy:stg
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:admin
+  script:
+    - bash scripts/deploy-frontend.sh stg admin
+  environment:
+    name: staging/admin
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+deploy:stg:api:
+  stage: deploy:stg
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:api
+  script:
+    - bash scripts/deploy-api.sh stg
+  environment:
+    name: staging/api
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# ─── DEPLOY PRD ──────────────────────────────────────────
+
+deploy:prd:user:
+  stage: deploy:prd
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:user
+  script:
+    - bash scripts/deploy-frontend.sh prd user
+  environment:
+    name: production/user
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+deploy:prd:admin:
+  stage: deploy:prd
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:admin
+  script:
+    - bash scripts/deploy-frontend.sh prd admin
+  environment:
+    name: production/admin
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+deploy:prd:api:
+  stage: deploy:prd
+  image: amazon/aws-cli:latest
+  dependencies:
+    - build:api
+  script:
+    - bash scripts/deploy-api.sh prd
+  environment:
+    name: production/api
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
