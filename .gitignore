@@ -5,6 +5,9 @@ dist/
 !.env.example
 *.tgz
 .DS_Store
+aws_key.txt
 !/CLAUDE.md
 !/.claude/
 !/.idea/
+.idea
+CLAUDE.md

@@ -1,0 +1,14 @@
+{
+  "name": "launchpad-domain",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./cognito": "./src/cognito.ts",
+    "./ses": "./src/ses.ts",
+    "./types": "./src/types.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.700.0",
+    "@aws-sdk/client-ses": "^3.700.0"
+  }
+}

@@ -1,0 +1,246 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+env:
+  AWS_REGION: eu-west-3
+
+jobs:
+  # ------- LINT -------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      - name: Lint API
+        run: cd code/api && bun run lint
+      - name: Lint User
+        run: cd code/www-user && bun install && bun run lint
+      - name: Lint Admin
+        run: cd code/www-admin && bun install && bun run lint
+
+  # ------- BUILD -------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install workspace dependencies
+        run: bun install
+
+      - name: Install frontend dependencies
+        run: |
+          cd code/www-user && bun install
+          cd ../www-admin && bun install
+
+      - name: Build API
+        run: cd code/api && bun run build
+
+      - name: Build Crons
+        run: cd code/crons && bun run build
+
+      - name: Build User Frontend
+        run: cd code/www-user && bun run build
+        env:
+          VITE_API_URL: ${{ secrets.STG_API_URL }}
+
+      - name: Build Admin Frontend
+        run: cd code/www-admin && bun run build
+        env:
+          VITE_API_URL: ${{ secrets.STG_API_URL }}
+
+      - name: Upload API artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-build
+          path: code/api/dist/
+
+      - name: Upload Crons artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crons-build
+          path: code/crons/dist/
+
+      - name: Upload User Frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: www-user-build
+          path: code/www-user/dist/
+
+      - name: Upload Admin Frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: www-admin-build
+          path: code/www-admin/dist/
+
+  # ------- DEPLOY STAGING (auto sur develop) -------
+  deploy-stg:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Install workspace dependencies
+        run: bun install
+
+      - name: Run migrations
+        run: bash infrastructure/scripts/migrate.sh
+        env:
+          DATABASE_URL: ${{ secrets.STG_DATABASE_URL }}
+
+      - name: Deploy API Lambda
+        run: |
+          cd api-build
+          zip -r ../api-lambda.zip .
+          cd ../code/api
+          zip -r ../../api-lambda.zip node_modules/ package.json
+          cd ../domain
+          zip -r ../../api-lambda.zip src/ package.json
+          cd ../emails
+          zip -r ../../api-lambda.zip .
+          cd ../..
+          aws lambda update-function-code \
+            --function-name ${{ secrets.STG_API_LAMBDA_NAME }} \
+            --zip-file fileb://api-lambda.zip
+          rm api-lambda.zip
+
+      - name: Deploy Crons Lambda
+        run: |
+          cd crons-build
+          zip -r ../cron-lambda.zip .
+          cd ../code/crons
+          zip -r ../../cron-lambda.zip node_modules/ package.json
+          cd ../..
+          aws lambda update-function-code \
+            --function-name ${{ secrets.STG_CRON_LAMBDA_NAME }} \
+            --zip-file fileb://cron-lambda.zip
+          rm cron-lambda.zip
+
+      - name: Deploy User Frontend
+        run: |
+          aws s3 sync www-user-build/ s3://${{ secrets.STG_USER_S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp www-user-build/index.html s3://${{ secrets.STG_USER_S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.STG_USER_CF_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Deploy Admin Frontend
+        run: |
+          aws s3 sync www-admin-build/ s3://${{ secrets.STG_ADMIN_S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp www-admin-build/index.html s3://${{ secrets.STG_ADMIN_S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.STG_ADMIN_CF_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+  # ------- DEPLOY PRODUCTION (manuel sur main) -------
+  deploy-prd:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Install workspace dependencies
+        run: bun install
+
+      - name: Run migrations
+        run: bash infrastructure/scripts/migrate.sh
+        env:
+          DATABASE_URL: ${{ secrets.PRD_DATABASE_URL }}
+
+      - name: Deploy API Lambda
+        run: |
+          cd api-build
+          zip -r ../api-lambda.zip .
+          cd ../code/api
+          zip -r ../../api-lambda.zip node_modules/ package.json
+          cd ../domain
+          zip -r ../../api-lambda.zip src/ package.json
+          cd ../emails
+          zip -r ../../api-lambda.zip .
+          cd ../..
+          aws lambda update-function-code \
+            --function-name ${{ secrets.PRD_API_LAMBDA_NAME }} \
+            --zip-file fileb://api-lambda.zip
+          rm api-lambda.zip
+
+      - name: Deploy Crons Lambda
+        run: |
+          cd crons-build
+          zip -r ../cron-lambda.zip .
+          cd ../code/crons
+          zip -r ../../cron-lambda.zip node_modules/ package.json
+          cd ../..
+          aws lambda update-function-code \
+            --function-name ${{ secrets.PRD_CRON_LAMBDA_NAME }} \
+            --zip-file fileb://cron-lambda.zip
+          rm cron-lambda.zip
+
+      - name: Deploy User Frontend
+        run: |
+          aws s3 sync www-user-build/ s3://${{ secrets.PRD_USER_S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp www-user-build/index.html s3://${{ secrets.PRD_USER_S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.PRD_USER_CF_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Deploy Admin Frontend
+        run: |
+          aws s3 sync www-admin-build/ s3://${{ secrets.PRD_ADMIN_S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp www-admin-build/index.html s3://${{ secrets.PRD_ADMIN_S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.PRD_ADMIN_CF_DISTRIBUTION_ID }} \
+            --paths "/*"

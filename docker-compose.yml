@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:16
+    container_name: launchpad-db
+    environment:
+      POSTGRES_USER: launchpad
+      POSTGRES_PASSWORD: launchpad
+      POSTGRES_DB: launchpad
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./code/api/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U launchpad"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: code/api/Dockerfile
+    container_name: launchpad-api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://launchpad:launchpad@db:5432/launchpad
+      COGNITO_USER_POOL_ID: ${COGNITO_USER_POOL_ID}
+      COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID}
+      AWS_REGION: ${AWS_REGION:-eu-west-3}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      ASSETS_BUCKET: ${ASSETS_BUCKET:-launchpad-assets-dev}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL:-noreply@launchpad.app}
+      APP_URL: http://localhost:5173
+    depends_on:
+      db:
+        condition: service_healthy
+
+  www-user:
+    build:
+      context: code/www-user
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000
+    container_name: launchpad-user
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+  www-admin:
+    build:
+      context: code/www-admin
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000
+    container_name: launchpad-admin
+    ports:
+      - "5174:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
