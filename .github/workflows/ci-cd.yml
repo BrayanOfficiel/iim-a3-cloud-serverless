@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, main]
+    branches: [stg, prd]
   pull_request:
-    branches: [develop, main]
+    branches: [stg, prd]
 
 env:
   AWS_REGION: eu-west-3
@@ -88,7 +88,7 @@ jobs:
     name: Deploy Staging
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/stg' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -168,7 +168,7 @@ jobs:
     name: Deploy Production
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/prd' && github.event_name == 'push'
     environment:
       name: production
     steps:

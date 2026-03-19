@@ -199,8 +199,8 @@ bash infrastructure/scripts/migrate.sh
 
 | Environnement | Branche | Deploiement |
 |---------------|---------|-------------|
-| Staging (STG) | `develop` | Automatique au push |
-| Production (PRD) | `main` | Approbation requise |
+| Staging (STG) | `stg` | Automatique au push |
+| Production (PRD) | `prd` | Approbation requise |
 
 ---
 
@@ -210,8 +210,8 @@ Le workflow `.github/workflows/ci-cd.yml` execute :
 
 1. **Lint** -- Verifie le code avec Biome
 2. **Build** -- Compile API, crons et frontends
-3. **Deploy STG** -- Deploie sur staging (push sur `develop`)
-4. **Deploy PRD** -- Deploie sur production (push sur `main`, approbation requise)
+3. **Deploy STG** -- Deploie sur staging (push sur `stg`)
+4. **Deploy PRD** -- Deploie sur production (push sur `prd`, approbation requise)
 
 ### Secrets GitHub a configurer
 
