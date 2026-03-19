@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { apiFetch } from "../lib/api";
 import { useUser } from "../context/UserContext";
+import { apiFetch } from "../lib/api";
 
 export default function Profile() {
   const { user, refreshUser } = useUser();
@@ -55,8 +55,14 @@ export default function Profile() {
         <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
           <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label className="block text-sm text-slate-300 mb-1">Nom</label>
+              <label
+                htmlFor="profile-name"
+                className="block text-sm text-slate-300 mb-1"
+              >
+                Nom
+              </label>
               <input
+                id="profile-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -65,10 +71,14 @@ export default function Profile() {
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-300 mb-1">
+              <label
+                htmlFor="profile-email"
+                className="block text-sm text-slate-300 mb-1"
+              >
                 Adresse e-mail
               </label>
               <input
+                id="profile-email"
                 type="email"
                 value={user.email}
                 disabled
@@ -79,15 +89,15 @@ export default function Profile() {
               </p>
             </div>
             <div>
-              <label className="block text-sm text-slate-300 mb-1">Role</label>
+              <span className="block text-sm text-slate-300 mb-1">Role</span>
               <p className="text-sm text-slate-400">
                 {user.role === "admin" ? "Administrateur" : "Utilisateur"}
               </p>
             </div>
             <div>
-              <label className="block text-sm text-slate-300 mb-1">
+              <span className="block text-sm text-slate-300 mb-1">
                 Membre depuis
-              </label>
+              </span>
               <p className="text-sm text-slate-400">
                 {new Date(user.createdAt).toLocaleDateString("fr-FR", {
                   day: "numeric",

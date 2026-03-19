@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
-import Login from "./pages/Login";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
-import Teams from "./pages/Teams";
 import AdminTeamDetail from "./pages/AdminTeamDetail";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Teams from "./pages/Teams";
+import Users from "./pages/Users";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("admin_token");

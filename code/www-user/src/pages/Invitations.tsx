@@ -76,8 +76,7 @@ export default function Invitations() {
                   Invitation a rejoindre une equipe
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  Recue le{" "}
-                  {new Date(inv.createdAt).toLocaleDateString("fr-FR")}
+                  Recue le {new Date(inv.createdAt).toLocaleDateString("fr-FR")}
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">

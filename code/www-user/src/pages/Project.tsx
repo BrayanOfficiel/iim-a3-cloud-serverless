@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { apiFetch } from "../lib/api";
 
 interface Task {
@@ -70,7 +70,7 @@ export default function Project() {
   async function moveTask(taskId: string, newStatus: Task["status"]) {
     // Optimistic update
     setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+      prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)),
     );
     try {
       await apiFetch(`/tasks/${taskId}`, {
@@ -139,9 +139,7 @@ export default function Project() {
         <div>
           <h1 className="text-2xl font-bold">{project?.name ?? "..."}</h1>
           {project?.description && (
-            <p className="text-slate-400 text-sm mt-1">
-              {project.description}
-            </p>
+            <p className="text-slate-400 text-sm mt-1">{project.description}</p>
           )}
         </div>
         <button
@@ -166,7 +164,6 @@ export default function Project() {
             onChange={(e) => setNewTaskName(e.target.value)}
             className="w-full px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none text-sm"
             required
-            autoFocus
           />
           <input
             type="text"

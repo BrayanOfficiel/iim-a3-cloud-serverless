@@ -21,7 +21,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     apiFetch<Team[]>("/teams").then(setTeams).catch(console.error);
-    apiFetch<Invitation[]>("/invitations").then(setInvitations).catch(console.error);
+    apiFetch<Invitation[]>("/invitations")
+      .then(setInvitations)
+      .catch(console.error);
   }, []);
 
   const pendingCount = invitations.filter((i) => i.status === "pending").length;
@@ -83,8 +85,7 @@ export default function Dashboard() {
             >
               <h3 className="font-medium">{team.name}</h3>
               <p className="text-sm text-slate-400 mt-1">
-                Creee le{" "}
-                {new Date(team.createdAt).toLocaleDateString("fr-FR")}
+                Creee le {new Date(team.createdAt).toLocaleDateString("fr-FR")}
               </p>
             </Link>
           ))}

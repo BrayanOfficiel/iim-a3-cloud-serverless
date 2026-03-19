@@ -22,7 +22,12 @@ export default function Teams() {
   }
 
   async function deleteTeam(id: string, name: string) {
-    if (!confirm(`Supprimer l'equipe "${name}" et tous ses projets/taches ? Cette action est irreversible.`)) return;
+    if (
+      !confirm(
+        `Supprimer l'equipe "${name}" et tous ses projets/taches ? Cette action est irreversible.`,
+      )
+    )
+      return;
     try {
       await api(`/admin/teams/${id}`, { method: "DELETE" });
       await loadTeams();

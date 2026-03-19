@@ -68,7 +68,6 @@ export default function Teams() {
             onChange={(e) => setNewName(e.target.value)}
             className="flex-1 px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none text-sm"
             required
-            autoFocus
           />
           <button
             type="submit"
@@ -99,8 +98,7 @@ export default function Teams() {
                 {team.name}
               </h3>
               <p className="text-sm text-slate-400 mt-1">
-                Creee le{" "}
-                {new Date(team.createdAt).toLocaleDateString("fr-FR")}
+                Creee le {new Date(team.createdAt).toLocaleDateString("fr-FR")}
               </p>
               <p className="text-xs text-indigo-400 mt-3">
                 Voir l'equipe &rarr;

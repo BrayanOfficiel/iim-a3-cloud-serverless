@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { apiFetch } from "../lib/api";
 
 interface UserInfo {
@@ -22,18 +28,18 @@ const UserContext = createContext<UserContextType>({
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserInfo | null>(null);
 
-  async function refreshUser() {
+  const refreshUser = useCallback(async () => {
     try {
       const data = await apiFetch<UserInfo>("/me");
       setUser(data);
     } catch (err) {
       console.error(err);
     }
-  }
+  }, []);
 
   useEffect(() => {
     refreshUser();
-  }, []);
+  }, [refreshUser]);
 
   return (
     <UserContext.Provider value={{ user, refreshUser }}>

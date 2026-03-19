@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
-import { UserProvider } from "./context/UserContext";
-import Login from "./pages/Login";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
+import { UserProvider } from "./context/UserContext";
 import Dashboard from "./pages/Dashboard";
-import Teams from "./pages/Teams";
-import TeamDetail from "./pages/TeamDetail";
-import Project from "./pages/Project";
 import Invitations from "./pages/Invitations";
+import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Project from "./pages/Project";
+import TeamDetail from "./pages/TeamDetail";
+import Teams from "./pages/Teams";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");

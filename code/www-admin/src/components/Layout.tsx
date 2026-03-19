@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from "react-router";
 import { useState } from "react";
+import { NavLink, useNavigate } from "react-router";
 
 const navItems = [
   { to: "/", label: "Tableau de bord" },
@@ -81,6 +81,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
+              <title>Menu</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

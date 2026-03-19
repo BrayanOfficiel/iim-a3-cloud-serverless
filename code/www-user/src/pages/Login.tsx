@@ -41,9 +41,7 @@ export default function Login() {
       <div className="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-white mb-2">Launchpad</h1>
         <p className="text-slate-400 mb-6">
-          {isRegister
-            ? "Creer votre compte"
-            : "Connectez-vous a votre espace"}
+          {isRegister ? "Creer votre compte" : "Connectez-vous a votre espace"}
         </p>
         {error && (
           <p className="text-red-400 bg-red-400/10 p-3 rounded-lg mb-4 text-sm">
@@ -58,8 +56,14 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div>
-              <label className="block text-sm text-slate-300 mb-1">Nom</label>
+              <label
+                htmlFor="login-name"
+                className="block text-sm text-slate-300 mb-1"
+              >
+                Nom
+              </label>
               <input
+                id="login-name"
                 type="text"
                 placeholder="Jean Dupont"
                 value={name}
@@ -70,10 +74,14 @@ export default function Login() {
             </div>
           )}
           <div>
-            <label className="block text-sm text-slate-300 mb-1">
+            <label
+              htmlFor="login-email"
+              className="block text-sm text-slate-300 mb-1"
+            >
               Adresse e-mail
             </label>
             <input
+              id="login-email"
               type="email"
               placeholder="vous@exemple.com"
               value={email}
@@ -83,10 +91,14 @@ export default function Login() {
             />
           </div>
           <div>
-            <label className="block text-sm text-slate-300 mb-1">
+            <label
+              htmlFor="login-password"
+              className="block text-sm text-slate-300 mb-1"
+            >
               Mot de passe
             </label>
             <input
+              id="login-password"
               type="password"
               placeholder="6 caracteres minimum"
               value={password}

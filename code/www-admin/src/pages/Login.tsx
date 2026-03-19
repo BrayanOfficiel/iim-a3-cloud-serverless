@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../lib/api";
 
@@ -50,8 +50,14 @@ export default function Login() {
             </p>
           )}
           <div>
-            <label className="block text-sm text-slate-300 mb-1">Email</label>
+            <label
+              htmlFor="email"
+              className="block text-sm text-slate-300 mb-1"
+            >
+              Email
+            </label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -60,10 +66,14 @@ export default function Login() {
             />
           </div>
           <div>
-            <label className="block text-sm text-slate-300 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm text-slate-300 mb-1"
+            >
               Mot de passe
             </label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

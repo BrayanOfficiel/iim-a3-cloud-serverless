@@ -22,7 +22,12 @@ export default function Users() {
   }
 
   async function deleteUser(id: string, name: string) {
-    if (!confirm(`Supprimer l'utilisateur "${name}" ? Cette action est irreversible.`)) return;
+    if (
+      !confirm(
+        `Supprimer l'utilisateur "${name}" ? Cette action est irreversible.`,
+      )
+    )
+      return;
     try {
       await api(`/admin/users/${id}`, { method: "DELETE" });
       await loadUsers();
