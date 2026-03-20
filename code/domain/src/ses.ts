@@ -1,7 +1,7 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import {SESClient, SendEmailCommand} from "@aws-sdk/client-ses";
 
 const client = new SESClient({
-  region: process.env.AWS_REGION ?? "eu-west-3",
+    region: process.env.AWS_REGION ?? "eu-west-3",
 });
 
 const FROM_EMAIL = process.env.SES_FROM_EMAIL ?? "noreply@launchpad.app";
@@ -28,7 +28,7 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
               <h2 style="margin:0 0 16px;color:#ffffff;font-size:20px;">Vous avez recu une invitation</h2>
               <p style="margin:0 0 24px;color:#94a3b8;font-size:16px;line-height:1.6;">
                 <strong style="color:#ffffff;">{{inviterName}}</strong> vous invite a rejoindre
-                l'equipe <strong style="color:#ffffff;">{{teamName}}</strong> sur Hive.
+                l'équipe <strong style="color:#ffffff;">{{teamName}}</strong> sur Hive.
               </p>
               <a href="{{appUrl}}/invitations"
                  style="display:inline-block;padding:12px 24px;background-color:#4f46e5;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:14px;">
@@ -56,34 +56,34 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
 </html>`;
 
 export async function sendInvitationEmail(
-  toEmail: string,
-  inviterName: string,
-  teamName: string,
+    toEmail: string,
+    inviterName: string,
+    teamName: string,
 ): Promise<void> {
-  const appUrl = process.env.APP_URL ?? "http://localhost:5173";
+    const appUrl = process.env.APP_URL ?? "http://localhost:5173";
 
-  const html = INVITATION_TEMPLATE.replaceAll("{{inviterName}}", inviterName)
-    .replaceAll("{{teamName}}", teamName)
-    .replaceAll("{{appUrl}}", appUrl);
+    const html = INVITATION_TEMPLATE.replaceAll("{{inviterName}}", inviterName)
+        .replaceAll("{{teamName}}", teamName)
+        .replaceAll("{{appUrl}}", appUrl);
 
-  await client.send(
-    new SendEmailCommand({
-      Source: FROM_EMAIL,
-      Destination: {
-        ToAddresses: [toEmail],
-      },
-      Message: {
-        Subject: {
-          Data: `${inviterName} vous invite a rejoindre l'equipe "${teamName}" sur Hive`,
-          Charset: "UTF-8",
-        },
-        Body: {
-          Html: {
-            Data: html,
-            Charset: "UTF-8",
-          },
-        },
-      },
-    }),
-  );
+    await client.send(
+        new SendEmailCommand({
+            Source: FROM_EMAIL,
+            Destination: {
+                ToAddresses: [toEmail],
+            },
+            Message: {
+                Subject: {
+                    Data: `${inviterName} vous invite a rejoindre l'équipe "${teamName}" sur Hive`,
+                    Charset: "UTF-8",
+                },
+                Body: {
+                    Html: {
+                        Data: html,
+                        Charset: "UTF-8",
+                    },
+                },
+            },
+        }),
+    );
 }
