@@ -40,7 +40,7 @@ export default function Login() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-white text-center mb-2">
-          Launchpad Admin
+          Hive Admin
         </h1>
         <p className="text-slate-400 text-center mb-8">Centre de controle</p>
 

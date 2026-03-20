@@ -68,7 +68,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="p-5 border-b border-border">
-          <h1 className="text-xl font-bold text-accent tracking-tight">Launchpad</h1>
+          <h1 className="text-xl font-bold text-accent tracking-tight flex items-center gap-2">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.18L18.36 7.5 12 10.82 5.64 7.5 12 4.18zM5 8.82l6 3.33v7.03l-6-3.33V8.82zm8 10.36V12.15l6-3.33v7.03l-6 3.33z"/></svg>
+            Hive
+          </h1>
           {user && (
             <p className="text-sm text-muted mt-1 truncate">{user.name}</p>
           )}
@@ -121,7 +124,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="font-bold text-accent">Launchpad</span>
+          <span className="font-bold text-accent flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.18L18.36 7.5 12 10.82 5.64 7.5 12 4.18zM5 8.82l6 3.33v7.03l-6-3.33V8.82zm8 10.36V12.15l6-3.33v7.03l-6 3.33z"/></svg>
+            Hive
+          </span>
         </header>
 
         <main className="flex-1 overflow-auto p-6">{children}</main>

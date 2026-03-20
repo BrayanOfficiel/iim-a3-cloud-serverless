@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="p-5 border-b border-slate-800">
           <h1 className="text-xl font-bold">
-            <span className="text-amber-500">Launchpad</span> Admin
+            <span className="text-amber-500">Hive</span> Admin
           </h1>
         </div>
 
@@ -92,7 +92,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
           <span className="font-bold">
-            <span className="text-amber-500">Launchpad</span> Admin
+            <span className="text-amber-500">Hive</span> Admin
           </span>
         </header>
 

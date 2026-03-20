@@ -11,7 +11,7 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invitation Launchpad</title>
+  <title>Invitation Hive</title>
 </head>
 <body style="margin:0;padding:0;background-color:#0f172a;font-family:Arial,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;padding:40px 20px;">
@@ -20,7 +20,7 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
         <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#1e293b;border-radius:12px;overflow:hidden;">
           <tr>
             <td style="padding:30px 40px;border-bottom:1px solid #334155;">
-              <h1 style="margin:0;color:#818cf8;font-size:24px;">Launchpad</h1>
+              <h1 style="margin:0;color:#818cf8;font-size:24px;">Hive</h1>
             </td>
           </tr>
           <tr>
@@ -28,7 +28,7 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
               <h2 style="margin:0 0 16px;color:#ffffff;font-size:20px;">Vous avez recu une invitation</h2>
               <p style="margin:0 0 24px;color:#94a3b8;font-size:16px;line-height:1.6;">
                 <strong style="color:#ffffff;">{{inviterName}}</strong> vous invite a rejoindre
-                l'equipe <strong style="color:#ffffff;">{{teamName}}</strong> sur Launchpad.
+                l'equipe <strong style="color:#ffffff;">{{teamName}}</strong> sur Hive.
               </p>
               <a href="{{appUrl}}/invitations"
                  style="display:inline-block;padding:12px 24px;background-color:#4f46e5;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:14px;">
@@ -44,7 +44,7 @@ const INVITATION_TEMPLATE = `<!DOCTYPE html>
           <tr>
             <td style="padding:20px 40px;border-top:1px solid #334155;">
               <p style="margin:0;color:#475569;font-size:12px;">
-                Cet email a ete envoye automatiquement par Launchpad.
+                Cet email a ete envoye automatiquement par Hive.
               </p>
             </td>
           </tr>
@@ -74,7 +74,7 @@ export async function sendInvitationEmail(
       },
       Message: {
         Subject: {
-          Data: `${inviterName} vous invite a rejoindre l'equipe "${teamName}" sur Launchpad`,
+          Data: `${inviterName} vous invite a rejoindre l'equipe "${teamName}" sur Hive`,
           Charset: "UTF-8",
         },
         Body: {
