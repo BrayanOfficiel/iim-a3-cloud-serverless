@@ -610,7 +610,7 @@
       "name": "06 - Tasks",
       "item": [
         {
-          "name": "01 - Créer tache (POST /projects/:projectId/tasks)",
+          "name": "01 - Créer tâche (POST /projects/:projectId/tasks)",
           "event": [
             {
               "listen": "test",
@@ -619,7 +619,7 @@
                   "if (pm.response.code === 201) {",
                   "  const data = pm.response.json();",
                   "  pm.collectionVariables.set('taskId', data.id);",
-                  "  pm.test('Tache créée', () => pm.expect(data.name).to.equal('Tache 1'));",
+                  "  pm.test('Tâche créée', () => pm.expect(data.name).to.equal('Tâche 1'));",
                   "}"
                 ]
               }
@@ -630,7 +630,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Tache 1\",\n  \"description\": \"Premiere tache de demo\"\n}",
+              "raw": "{\n  \"name\": \"Tâche 1\",\n  \"description\": \"Premiere tâche de demo\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -651,7 +651,7 @@
           }
         },
         {
-          "name": "02 - Taches du projet (GET /projects/:projectId/tasks)",
+          "name": "02 - Tâches du projet (GET /projects/:projectId/tasks)",
           "request": {
             "method": "GET",
             "header": [],
@@ -669,7 +669,7 @@
           }
         },
         {
-          "name": "03 - Detail tache (GET /tasks/:taskId)",
+          "name": "03 - Detail tâche (GET /tasks/:taskId)",
           "request": {
             "method": "GET",
             "header": [],
@@ -686,13 +686,13 @@
           }
         },
         {
-          "name": "04 - Modifier tache (PATCH /tasks/:taskId)",
+          "name": "04 - Modifier tâche (PATCH /tasks/:taskId)",
           "request": {
             "method": "PATCH",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Tache 1 Modifiee\",\n  \"description\": \"Description mise a jour\"\n}",
+              "raw": "{\n  \"name\": \"Tâche 1 Modifiee\",\n  \"description\": \"Description mise a jour\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -712,7 +712,7 @@
           }
         },
         {
-          "name": "05 - Assigner tache (PATCH /tasks/:taskId/assign)",
+          "name": "05 - Assigner tâche (PATCH /tasks/:taskId/assign)",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -766,7 +766,7 @@
           }
         },
         {
-          "name": "07 - Supprimer tache (DELETE /tasks/:taskId)",
+          "name": "07 - Supprimer tâche (DELETE /tasks/:taskId)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -829,7 +829,7 @@
           }
         },
         {
-          "name": "02 - Assets de la tache (GET /tasks/:taskId/assets)",
+          "name": "02 - Assets de la tâche (GET /tasks/:taskId/assets)",
           "request": {
             "method": "GET",
             "header": [],

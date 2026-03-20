@@ -277,24 +277,24 @@ Le workflow `.github/workflows/ci-cd.yml` execute :
 | PATCH   | `/projects/:projectId`    | JWT  | Modifier projet     |
 | DELETE  | `/projects/:projectId`    | JWT  | Supprimer projet    |
 
-### Taches
+### Tâches
 
 | Methode | Endpoint                     | Auth | Description      |
 |---------|------------------------------|------|------------------|
-| POST    | `/projects/:projectId/tasks` | JWT  | Créer tache      |
-| GET     | `/projects/:projectId/tasks` | JWT  | Taches du projet |
-| GET     | `/tasks/:taskId`             | JWT  | Detail tache     |
-| PATCH   | `/tasks/:taskId`             | JWT  | Modifier tache   |
-| PATCH   | `/tasks/:taskId/assign`      | JWT  | Assigner tache   |
+| POST    | `/projects/:projectId/tasks` | JWT  | Créer tâche      |
+| GET     | `/projects/:projectId/tasks` | JWT  | Tâches du projet |
+| GET     | `/tasks/:taskId`             | JWT  | Detail tâche     |
+| PATCH   | `/tasks/:taskId`             | JWT  | Modifier tâche   |
+| PATCH   | `/tasks/:taskId/assign`      | JWT  | Assigner tâche   |
 | PATCH   | `/tasks/:taskId/status`      | JWT  | Changer statut   |
-| DELETE  | `/tasks/:taskId`             | JWT  | Supprimer tache  |
+| DELETE  | `/tasks/:taskId`             | JWT  | Supprimer tâche  |
 
 ### Assets
 
 | Methode | Endpoint                | Auth | Description             |
 |---------|-------------------------|------|-------------------------|
 | POST    | `/tasks/:taskId/assets` | JWT  | Presigned URL upload S3 |
-| GET     | `/tasks/:taskId/assets` | JWT  | Assets de la tache      |
+| GET     | `/tasks/:taskId/assets` | JWT  | Assets de la tâche      |
 | DELETE  | `/assets/:assetId`      | JWT  | Supprimer asset         |
 
 ### Admin
