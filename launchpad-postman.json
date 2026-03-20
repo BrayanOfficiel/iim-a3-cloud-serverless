@@ -643,7 +643,25 @@
       "name": "08 - Admin",
       "item": [
         {
-          "name": "00 - Connexion Admin",
+          "name": "00 - Inscription Admin (POST /users)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@lp.fr\",\n  \"password\": \"Admin123!\",\n  \"name\": \"Admin\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "01 - Connexion Admin",
           "event": [
             {
               "listen": "test",
