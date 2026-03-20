@@ -16,9 +16,13 @@ export async function apiFetch<T>(
   });
 
   if (res.status === 401) {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-    throw new Error("Unauthorized");
+    // Ne pas redirect si on est deja sur la page login (evite flash error)
+    if (!window.location.pathname.startsWith("/login")) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error ?? "Email ou mot de passe incorrect");
   }
 
   if (!res.ok) {

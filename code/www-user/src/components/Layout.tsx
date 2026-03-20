@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { useUser } from "../context/UserContext";
+import PurgeButton from "./PurgeButton";
 
 const navItems = [
   { to: "/", label: "Tableau de bord" },
@@ -103,6 +104,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
+      <PurgeButton />
     </div>
   );
 }

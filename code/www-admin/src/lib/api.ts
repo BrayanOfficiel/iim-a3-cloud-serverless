@@ -16,9 +16,12 @@ export async function api<T>(
   });
 
   if (res.status === 401) {
-    localStorage.removeItem("admin_token");
-    window.location.href = "/login";
-    throw new Error("Unauthorized");
+    if (!window.location.pathname.startsWith("/login")) {
+      localStorage.removeItem("admin_token");
+      window.location.href = "/login";
+    }
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error ?? "Email ou mot de passe incorrect");
   }
 
   if (!res.ok) {
