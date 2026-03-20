@@ -56,6 +56,22 @@ adminRouter.get("/users", async (c) => {
 // DELETE /admin/users/:id
 adminRouter.delete("/users/:id", async (c) => {
   const id = c.req.param("id");
+
+  // Supprimer de Cognito
+  const cognito = new CognitoIdentityProviderClient({
+    region: process.env.AWS_REGION ?? "eu-west-3",
+  });
+  try {
+    await cognito.send(
+      new AdminDeleteUserCommand({
+        UserPoolId: process.env.COGNITO_USER_POOL_ID ?? "",
+        Username: id,
+      }),
+    );
+  } catch (err) {
+    console.error(`Erreur suppression Cognito ${id}:`, err);
+  }
+
   await sql`DELETE FROM users WHERE id = ${id}`;
   return c.json({ success: true });
 });
