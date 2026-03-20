@@ -22,29 +22,28 @@ app.use(
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-// Auth: POST /users, POST /auth/login
+// Auth
 app.route("/", auth);
-app.route("/auth", auth);
 
-// Users: GET/PATCH /me
+// Users
 app.route("/", usersRouter);
 
-// Teams: GET/POST /teams, GET /teams/:teamId, GET /teams/:teamId/members, DELETE /teams/:teamId/members/:memberId
-app.route("/", teamsRouter);
+// Teams
+app.route("/teams", teamsRouter);
 
-// Invitations: POST /teams/:teamId/invitations, GET /invitations, POST /invitations/:id/accept|reject
+// Invitations
 app.route("/", invitationsRouter);
 
-// Projects: POST/GET /teams/:teamId/projects, GET/PATCH/DELETE /projects/:projectId
+// Projects
 app.route("/", projectsRouter);
 
-// Tasks: POST/GET /projects/:projectId/tasks, GET/PATCH/DELETE /tasks/:taskId, PATCH /tasks/:taskId/assign|status
+// Tasks
 app.route("/", tasksRouter);
 
-// Assets: POST/GET /tasks/:taskId/assets, DELETE /assets/:assetId
+// Assets
 app.route("/", assetsRouter);
 
-// Admin: /admin/*
+// Admin
 app.route("/admin", adminRouter);
 
 export default app;

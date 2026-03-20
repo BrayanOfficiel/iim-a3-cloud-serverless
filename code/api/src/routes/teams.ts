@@ -8,6 +8,20 @@ import { authMiddleware } from "../middleware/auth";
 const teamsRouter = new Hono();
 teamsRouter.use("*", authMiddleware);
 
+// GET /teams
+teamsRouter.get("/", async (c) => {
+  const userId = c.get("userId");
+
+  const result = await sql`
+    SELECT t.id, t.name, t.created_by, t.created_at
+    FROM teams t
+    INNER JOIN team_members tm ON t.id = tm.team_id
+    WHERE tm.user_id = ${userId}
+  `;
+
+  return c.json(result);
+});
+
 // POST /teams
 teamsRouter.post(
   "/",
@@ -30,20 +44,6 @@ teamsRouter.post(
     return c.json(team, 201);
   },
 );
-
-// GET /teams (mes equipes)
-teamsRouter.get("/", async (c) => {
-  const userId = c.get("userId");
-
-  const result = await sql`
-    SELECT t.id, t.name, t.created_by, t.created_at
-    FROM teams t
-    INNER JOIN team_members tm ON t.id = tm.team_id
-    WHERE tm.user_id = ${userId}
-  `;
-
-  return c.json(result);
-});
 
 // GET /teams/:teamId
 teamsRouter.get("/:teamId", async (c) => {
