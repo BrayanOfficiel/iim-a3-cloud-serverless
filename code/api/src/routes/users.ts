@@ -9,7 +9,7 @@ const usersRouter = new Hono();
 usersRouter.use("*", authMiddleware);
 
 // GET /me
-usersRouter.get("/me", async (c) => {
+usersRouter.get("/", async (c) => {
   const userId = c.get("userId");
 
   const [dbUser] =
@@ -35,7 +35,7 @@ const updateSchema = z.object({
 });
 
 // PATCH /me
-usersRouter.patch("/me", zValidator("json", updateSchema), async (c) => {
+usersRouter.patch("/", zValidator("json", updateSchema), async (c) => {
   const userId = c.get("userId");
   const data = c.req.valid("json");
 

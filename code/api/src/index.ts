@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import adminRouter from "./routes/admin";
 import assetsRouter from "./routes/assets";
-import auth from "./routes/auth";
+import authRouter from "./routes/auth";
 import invitationsRouter from "./routes/invitations";
 import projectsRouter from "./routes/projects";
 import tasksRouter from "./routes/tasks";
@@ -22,28 +22,29 @@ app.use(
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-// Auth
-app.route("/", auth);
+// Auth (pas de middleware auth)
+app.route("/", authRouter);
+app.route("/auth", authRouter);
 
-// Users
-app.route("/", usersRouter);
+// Users (avec middleware auth)
+app.route("/me", usersRouter);
 
-// Teams
+// Teams (avec middleware auth)
 app.route("/teams", teamsRouter);
 
-// Invitations
+// Invitations (avec middleware auth)
 app.route("/", invitationsRouter);
 
-// Projects
+// Projects (avec middleware auth)
 app.route("/", projectsRouter);
 
-// Tasks
+// Tasks (avec middleware auth)
 app.route("/", tasksRouter);
 
-// Assets
+// Assets (avec middleware auth)
 app.route("/", assetsRouter);
 
-// Admin
+// Admin (avec middleware auth + admin)
 app.route("/admin", adminRouter);
 
 export default app;
