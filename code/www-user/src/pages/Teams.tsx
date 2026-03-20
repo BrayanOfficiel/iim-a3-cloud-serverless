@@ -49,42 +49,50 @@ export default function Teams() {
         <button
           type="button"
           onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg text-sm font-medium transition-colors"
         >
-          {showForm ? "Annuler" : "Nouvelle equipe"}
+          {showForm ? (
+            "Annuler"
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Nouvelle equipe
+            </>
+          )}
         </button>
       </div>
 
-      {/* Formulaire creation */}
       {showForm && (
         <form
           onSubmit={createTeam}
-          className="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-6 flex gap-3"
+          className="bg-surface-card border border-border rounded-xl p-4 mb-6 flex gap-3"
         >
           <input
             type="text"
             placeholder="Nom de l'equipe"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none text-sm"
+            className="flex-1 px-3 py-2 bg-surface-elevated text-white rounded-lg border border-border focus:border-accent focus:outline-none text-sm transition-colors"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-accent hover:bg-accent-hover disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
           >
             {loading ? "Creation..." : "Creer"}
           </button>
         </form>
       )}
 
-      {/* Liste */}
       {teams.length === 0 ? (
-        <div className="bg-slate-800 rounded-xl p-8 border border-slate-700 text-center">
-          <p className="text-slate-400">
-            Aucune equipe. Cliquez sur "Nouvelle equipe" pour commencer.
-          </p>
+        <div className="bg-surface-card rounded-xl p-8 border border-border text-center">
+          <svg className="w-12 h-12 text-neutral-700 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+          </svg>
+          <p className="text-muted">Aucune equipe. Cliquez sur "Nouvelle equipe" pour commencer.</p>
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -92,17 +100,25 @@ export default function Teams() {
             <Link
               key={team.id}
               to={`/teams/${team.id}`}
-              className="bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-indigo-500 transition-colors group"
+              className="bg-surface-card p-5 rounded-xl border border-border hover:border-accent transition-colors group"
             >
-              <h3 className="font-medium text-lg group-hover:text-indigo-400 transition-colors">
-                {team.name}
-              </h3>
-              <p className="text-sm text-slate-400 mt-1">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center text-accent font-bold shrink-0">
+                  {team.name[0].toUpperCase()}
+                </div>
+                <h3 className="font-medium text-lg group-hover:text-accent transition-colors truncate">
+                  {team.name}
+                </h3>
+              </div>
+              <p className="text-sm text-muted">
                 Creee le {new Date(team.createdAt).toLocaleDateString("fr-FR")}
               </p>
-              <p className="text-xs text-indigo-400 mt-3">
-                Voir l'equipe &rarr;
-              </p>
+              <div className="flex items-center gap-1 text-xs text-accent mt-3">
+                Voir l'equipe
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </div>
             </Link>
           ))}
         </div>

@@ -42,107 +42,96 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
-      <div className="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-white mb-2">Launchpad</h1>
-        <p className="text-slate-400 mb-6">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
+      <div className="bg-surface-card border border-border p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
+            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white">Launchpad</h1>
+        </div>
+        <p className="text-muted mb-6">
           {isRegister ? "Creer votre compte" : "Connectez-vous a votre espace"}
         </p>
+
         {error && (
-          <p className="text-red-400 bg-red-400/10 p-3 rounded-lg mb-4 text-sm">
+          <div className="flex items-center gap-2 text-red-400 bg-red-400/10 border border-red-400/20 p-3 rounded-lg mb-4 text-sm">
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
             {error}
-          </p>
+          </div>
         )}
         {success && (
-          <p className="text-green-400 bg-green-400/10 p-3 rounded-lg mb-4 text-sm">
+          <div className="flex items-center gap-2 text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 p-3 rounded-lg mb-4 text-sm">
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
             {success}
-          </p>
+          </div>
         )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div>
-              <label
-                htmlFor="login-name"
-                className="block text-sm text-slate-300 mb-1"
-              >
-                Nom
-              </label>
+              <label htmlFor="login-name" className="block text-sm text-neutral-300 mb-1">Nom</label>
               <input
                 id="login-name"
                 type="text"
                 placeholder="Jean Dupont"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full p-3 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
+                className="w-full p-3 bg-surface-elevated text-white rounded-lg border border-border focus:border-accent focus:outline-none transition-colors"
                 required
               />
             </div>
           )}
           <div>
-            <label
-              htmlFor="login-email"
-              className="block text-sm text-slate-300 mb-1"
-            >
-              Adresse e-mail
-            </label>
+            <label htmlFor="login-email" className="block text-sm text-neutral-300 mb-1">Adresse e-mail</label>
             <input
               id="login-email"
               type="email"
               placeholder="vous@exemple.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
+              className="w-full p-3 bg-surface-elevated text-white rounded-lg border border-border focus:border-accent focus:outline-none transition-colors"
               required
             />
           </div>
           <div>
-            <label
-              htmlFor="login-password"
-              className="block text-sm text-slate-300 mb-1"
-            >
-              Mot de passe
-            </label>
+            <label htmlFor="login-password" className="block text-sm text-neutral-300 mb-1">Mot de passe</label>
             <input
               id="login-password"
               type="password"
               placeholder="Min. 8 car., majuscule, minuscule, chiffre, special"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
+              className="w-full p-3 bg-surface-elevated text-white rounded-lg border border-border focus:border-accent focus:outline-none transition-colors"
               required
               minLength={8}
             />
             {isRegister && (
-              <p className="text-slate-500 text-xs mt-1">
-                Minimum 8 caracteres, une majuscule, une minuscule, un chiffre
-                et un caractere special
+              <p className="text-neutral-500 text-xs mt-1">
+                Minimum 8 caracteres, une majuscule, une minuscule, un chiffre et un caractere special
               </p>
             )}
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+            className="w-full p-3 bg-accent hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
           >
-            {loading
-              ? "Chargement..."
-              : isRegister
-                ? "Creer le compte"
-                : "Se connecter"}
+            {loading ? "Chargement..." : isRegister ? "Creer le compte" : "Se connecter"}
           </button>
         </form>
         <button
           type="button"
-          onClick={() => {
-            setIsRegister(!isRegister);
-            setError("");
-            setSuccess("");
-          }}
-          className="mt-4 text-indigo-400 hover:text-indigo-300 text-sm"
+          onClick={() => { setIsRegister(!isRegister); setError(""); setSuccess(""); }}
+          className="mt-4 text-accent hover:text-accent-hover text-sm transition-colors"
         >
-          {isRegister
-            ? "Deja un compte ? Se connecter"
-            : "Pas encore de compte ? S'inscrire"}
+          {isRegister ? "Deja un compte ? Se connecter" : "Pas encore de compte ? S'inscrire"}
         </button>
       </div>
     </div>
