@@ -242,10 +242,12 @@ adminRouter.get("/backups", async (c) => {
   );
 });
 
-// POST /admin/purge -- Purge toute la BDD + Cognito
+// POST /admin/purge -- Purge toute la BDD + Cognito (sauf admin connecte)
 adminRouter.post("/purge", async (c) => {
-  // Recuperer tous les user IDs en BDD
-  const users = await sql`SELECT id FROM users`;
+  const currentUserId = c.get("userId");
+
+  // Recuperer tous les user IDs sauf l'admin connecte
+  const users = await sql`SELECT id FROM users WHERE id != ${currentUserId}`;
 
   // Supprimer chaque utilisateur de Cognito
   const cognito = new CognitoIdentityProviderClient({
@@ -266,12 +268,13 @@ adminRouter.post("/purge", async (c) => {
     }
   }
 
-  // Purge BDD
-  await sql`TRUNCATE assets, tasks, projects, invitations, team_members, teams, users CASCADE`;
+  // Purge BDD (cascade supprime les donnees liees, puis re-insere l'admin)
+  await sql`TRUNCATE assets, tasks, projects, invitations, team_members, teams, backups, users CASCADE`;
+  await sql`INSERT INTO users (id, role) VALUES (${currentUserId}, 'admin')`;
 
   return c.json({
     success: true,
-    message: "Base de donnees et Cognito purges",
+    message: "Base de donnees et Cognito purges (admin conserve)",
   });
 });
 
