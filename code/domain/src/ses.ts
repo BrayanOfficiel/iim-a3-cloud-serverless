@@ -1,7 +1,4 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { readFileSync } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 
 const client = new SESClient({
   region: process.env.AWS_REGION ?? "eu-west-3",
@@ -9,34 +6,65 @@ const client = new SESClient({
 
 const FROM_EMAIL = process.env.SES_FROM_EMAIL ?? "noreply@launchpad.app";
 
-function loadTemplate(
-  templateName: string,
-  variables: Record<string, string>
-): string {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const templatePath = resolve(__dirname, "../../emails", `${templateName}.html`);
-  let html = readFileSync(templatePath, "utf-8");
+const INVITATION_TEMPLATE = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation Launchpad</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0f172a;font-family:Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#1e293b;border-radius:12px;overflow:hidden;">
+          <tr>
+            <td style="padding:30px 40px;border-bottom:1px solid #334155;">
+              <h1 style="margin:0;color:#818cf8;font-size:24px;">Launchpad</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px;">
+              <h2 style="margin:0 0 16px;color:#ffffff;font-size:20px;">Vous avez recu une invitation</h2>
+              <p style="margin:0 0 24px;color:#94a3b8;font-size:16px;line-height:1.6;">
+                <strong style="color:#ffffff;">{{inviterName}}</strong> vous invite a rejoindre
+                l'equipe <strong style="color:#ffffff;">{{teamName}}</strong> sur Launchpad.
+              </p>
+              <a href="{{appUrl}}/invitations"
+                 style="display:inline-block;padding:12px 24px;background-color:#4f46e5;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:14px;">
+                Voir l'invitation
+              </a>
+              <p style="margin:24px 0 0;color:#64748b;font-size:13px;line-height:1.5;">
+                Si vous n'avez pas de compte, inscrivez-vous sur
+                <a href="{{appUrl}}" style="color:#818cf8;">{{appUrl}}</a>
+                avec cette adresse email pour voir l'invitation.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 40px;border-top:1px solid #334155;">
+              <p style="margin:0;color:#475569;font-size:12px;">
+                Cet email a ete envoye automatiquement par Launchpad.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 
-  for (const [key, value] of Object.entries(variables)) {
-    html = html.replaceAll(`{{${key}}}`, value);
-  }
-
-  return html;
-}
-
-// Envoyer un email d'invitation à rejoindre une équipe
 export async function sendInvitationEmail(
   toEmail: string,
   inviterName: string,
-  teamName: string
+  teamName: string,
 ): Promise<void> {
   const appUrl = process.env.APP_URL ?? "http://localhost:5173";
 
-  const html = loadTemplate("invitation", {
-    inviterName,
-    teamName,
-    appUrl,
-  });
+  const html = INVITATION_TEMPLATE.replaceAll("{{inviterName}}", inviterName)
+    .replaceAll("{{teamName}}", teamName)
+    .replaceAll("{{appUrl}}", appUrl);
 
   await client.send(
     new SendEmailCommand({
@@ -46,7 +74,7 @@ export async function sendInvitationEmail(
       },
       Message: {
         Subject: {
-          Data: `${inviterName} vous invite à rejoindre l'équipe "${teamName}" sur Launchpad`,
+          Data: `${inviterName} vous invite a rejoindre l'equipe "${teamName}" sur Launchpad`,
           Charset: "UTF-8",
         },
         Body: {
@@ -56,6 +84,6 @@ export async function sendInvitationEmail(
           },
         },
       },
-    })
+    }),
   );
 }
