@@ -53,6 +53,21 @@ adminRouter.get("/users", async (c) => {
   return c.json(users);
 });
 
+// PATCH /admin/users/:id/role -- Changer le role d'un utilisateur
+adminRouter.patch(
+  "/users/:id/role",
+  zValidator("json", z.object({ role: z.enum(["user", "admin"]) })),
+  async (c) => {
+    const id = c.req.param("id");
+    const { role } = c.req.valid("json");
+    const [updated] = await sql`
+      UPDATE users SET role = ${role} WHERE id = ${id} RETURNING id, role
+    `;
+    if (!updated) return c.json({ error: "Utilisateur introuvable" }, 404);
+    return c.json(updated);
+  },
+);
+
 // DELETE /admin/users/:id
 adminRouter.delete("/users/:id", async (c) => {
   const id = c.req.param("id");
