@@ -274,7 +274,7 @@
       "name": "03 - Teams",
       "item": [
         {
-          "name": "01 - Creer équipe (POST /teams)",
+          "name": "01 - Créer équipe (POST /teams)",
           "event": [
             {
               "listen": "test",
@@ -283,7 +283,7 @@
                   "if (pm.response.code === 201) {",
                   "  const data = pm.response.json();",
                   "  pm.collectionVariables.set('teamId', data.id);",
-                  "  pm.test('Équipe creee', () => pm.expect(data.name).to.equal('Mon Équipe Demo'));",
+                  "  pm.test('Équipe créée', () => pm.expect(data.name).to.equal('Mon Équipe Demo'));",
                   "}"
                 ]
               }
@@ -486,7 +486,7 @@
       "name": "05 - Projects",
       "item": [
         {
-          "name": "01 - Creer projet (POST /teams/:teamId/projects)",
+          "name": "01 - Créer projet (POST /teams/:teamId/projects)",
           "event": [
             {
               "listen": "test",
@@ -610,7 +610,7 @@
       "name": "06 - Tasks",
       "item": [
         {
-          "name": "01 - Creer tache (POST /projects/:projectId/tasks)",
+          "name": "01 - Créer tache (POST /projects/:projectId/tasks)",
           "event": [
             {
               "listen": "test",
@@ -619,7 +619,7 @@
                   "if (pm.response.code === 201) {",
                   "  const data = pm.response.json();",
                   "  pm.collectionVariables.set('taskId', data.id);",
-                  "  pm.test('Tache creee', () => pm.expect(data.name).to.equal('Tache 1'));",
+                  "  pm.test('Tache créée', () => pm.expect(data.name).to.equal('Tache 1'));",
                   "}"
                 ]
               }
@@ -797,7 +797,7 @@
                   "if (pm.response.code === 201) {",
                   "  const data = pm.response.json();",
                   "  pm.collectionVariables.set('assetId', data.asset.id);",
-                  "  pm.test('Asset cree avec uploadUrl', () => pm.expect(data.uploadUrl).to.be.a('string'));",
+                  "  pm.test('Asset créé avec uploadUrl', () => pm.expect(data.uploadUrl).to.be.a('string'));",
                   "}"
                 ]
               }

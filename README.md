@@ -11,7 +11,7 @@ Plateforme collaborative de gestion de projets (Kanban) deployee sur AWS avec un
 3. [Installation locale avec Docker](#3-installation-locale-avec-docker)
 4. [Installation locale sans Docker](#4-installation-locale-sans-docker)
 5. [Variables d'environnement](#5-variables-denvironnement)
-6. [Creer un administrateur](#6-creer-un-administrateur)
+6. [Créer un administrateur](#6-Créer-un-administrateur)
 7. [Architecture AWS](#7-architecture-aws)
 8. [Deploiement](#8-deploiement)
 9. [CI/CD GitHub Actions](#9-cicd-github-actions)
@@ -132,7 +132,7 @@ cd code/www-admin && bun run dev # Port 5174
 
 ---
 
-## 6. Creer un administrateur
+## 6. Créer un administrateur
 
 S'inscrire via le frontend utilisateur, puis passer le role en admin :
 
@@ -252,7 +252,7 @@ Le workflow `.github/workflows/ci-cd.yml` execute :
 
 | Methode | Endpoint                           | Auth | Description               |
 |---------|------------------------------------|------|---------------------------|
-| POST    | `/teams`                           | JWT  | Creer une équipe          |
+| POST    | `/teams`                           | JWT  | Créer une équipe          |
 | GET     | `/teams`                           | JWT  | Mes équipes               |
 | GET     | `/teams/:teamId`                   | JWT  | Detail équipe             |
 | GET     | `/teams/:teamId/members`           | JWT  | Membres (enrichi Cognito) |
@@ -271,7 +271,7 @@ Le workflow `.github/workflows/ci-cd.yml` execute :
 
 | Methode | Endpoint                  | Auth | Description         |
 |---------|---------------------------|------|---------------------|
-| POST    | `/teams/:teamId/projects` | JWT  | Creer projet        |
+| POST    | `/teams/:teamId/projects` | JWT  | Créer projet        |
 | GET     | `/teams/:teamId/projects` | JWT  | Projets de l'équipe |
 | GET     | `/projects/:projectId`    | JWT  | Detail projet       |
 | PATCH   | `/projects/:projectId`    | JWT  | Modifier projet     |
@@ -281,7 +281,7 @@ Le workflow `.github/workflows/ci-cd.yml` execute :
 
 | Methode | Endpoint                     | Auth | Description      |
 |---------|------------------------------|------|------------------|
-| POST    | `/projects/:projectId/tasks` | JWT  | Creer tache      |
+| POST    | `/projects/:projectId/tasks` | JWT  | Créer tache      |
 | GET     | `/projects/:projectId/tasks` | JWT  | Taches du projet |
 | GET     | `/tasks/:taskId`             | JWT  | Detail tache     |
 | PATCH   | `/tasks/:taskId`             | JWT  | Modifier tache   |
