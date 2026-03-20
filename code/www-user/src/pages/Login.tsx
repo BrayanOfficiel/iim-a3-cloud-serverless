@@ -9,12 +9,14 @@ export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setLoading(true);
     try {
       if (isRegister) {
         await apiFetch("/users", {
@@ -22,6 +24,7 @@ export default function Login() {
           body: JSON.stringify({ email, password, name }),
         });
         setIsRegister(false);
+        setPassword("");
         setSuccess("Compte cree avec succes. Vous pouvez vous connecter.");
         return;
       }
@@ -33,6 +36,8 @@ export default function Login() {
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -100,18 +105,30 @@ export default function Login() {
             <input
               id="login-password"
               type="password"
-              placeholder="6 caracteres minimum"
+              placeholder="Min. 8 car., majuscule, minuscule, chiffre, special"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-indigo-500 focus:outline-none"
               required
+              minLength={8}
             />
+            {isRegister && (
+              <p className="text-slate-500 text-xs mt-1">
+                Minimum 8 caracteres, une majuscule, une minuscule, un chiffre
+                et un caractere special
+              </p>
+            )}
           </div>
           <button
             type="submit"
-            className="w-full p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors"
+            disabled={loading}
+            className="w-full p-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
           >
-            {isRegister ? "Creer le compte" : "Se connecter"}
+            {loading
+              ? "Chargement..."
+              : isRegister
+                ? "Creer le compte"
+                : "Se connecter"}
           </button>
         </form>
         <button

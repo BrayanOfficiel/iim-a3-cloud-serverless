@@ -7,10 +7,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       const data = await api<{
         token: string;
@@ -21,7 +23,7 @@ export default function Login() {
       });
 
       if (data.user.role !== "admin") {
-        setError("Accès réservé aux administrateurs");
+        setError("Acces reserve aux administrateurs");
         return;
       }
 
@@ -29,6 +31,8 @@ export default function Login() {
       navigate("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -38,7 +42,7 @@ export default function Login() {
         <h1 className="text-2xl font-bold text-white text-center mb-2">
           Launchpad Admin
         </h1>
-        <p className="text-slate-400 text-center mb-8">Centre de contrôle</p>
+        <p className="text-slate-400 text-center mb-8">Centre de controle</p>
 
         <form
           onSubmit={handleSubmit}
@@ -59,6 +63,7 @@ export default function Login() {
             <input
               id="email"
               type="email"
+              placeholder="admin@exemple.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-slate-800 text-white rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500"
@@ -75,17 +80,20 @@ export default function Login() {
             <input
               id="password"
               type="password"
+              placeholder="Min. 8 car., majuscule, minuscule, chiffre, special"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-slate-800 text-white rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-amber-500"
               required
+              minLength={8}
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-lg py-2 transition-colors"
+            disabled={loading}
+            className="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2 transition-colors"
           >
-            Connexion
+            {loading ? "Chargement..." : "Connexion"}
           </button>
         </form>
       </div>
