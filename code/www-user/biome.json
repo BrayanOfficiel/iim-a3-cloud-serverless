@@ -1,0 +1,10 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "linter": {
+    "rules": {
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      }
+    }
+  }
+}
