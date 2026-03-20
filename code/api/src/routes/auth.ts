@@ -12,7 +12,7 @@ const auth = new Hono();
 
 const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(8),
   name: z.string().min(1),
 });
 
@@ -34,6 +34,15 @@ auth.post("/users", zValidator("json", registerSchema), async (c) => {
   } catch (err: unknown) {
     if (err instanceof Error && err.name === "UsernameExistsException") {
       return c.json({ error: "Cet email est deja utilise" }, 409);
+    }
+    if (err instanceof Error && err.name === "InvalidPasswordException") {
+      return c.json(
+        {
+          error:
+            "Mot de passe invalide (min 8 caracteres, majuscule, minuscule, chiffre, caractere special)",
+        },
+        400,
+      );
     }
     throw err;
   }
