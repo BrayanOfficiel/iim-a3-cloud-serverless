@@ -16,6 +16,17 @@ assetsRouter.use("*", authMiddleware);
 const s3 = new S3Client({ region: process.env.AWS_REGION ?? "eu-west-3" });
 const BUCKET = process.env.ASSETS_BUCKET ?? "";
 
+function formatAsset(row: Record<string, unknown>) {
+  return {
+    id: row.id,
+    filename: row.filename,
+    s3Key: row.s3_key,
+    taskId: row.task_id,
+    uploadedBy: row.uploaded_by,
+    createdAt: row.created_at,
+  };
+}
+
 // POST /tasks/:taskId/assets
 assetsRouter.post(
   "/tasks/:taskId/assets",
@@ -45,7 +56,7 @@ assetsRouter.post(
       RETURNING id, filename, s3_key, task_id, uploaded_by, created_at
     `;
 
-    return c.json({ uploadUrl, asset }, 201);
+    return c.json({ uploadUrl, asset: formatAsset(asset) }, 201);
   },
 );
 
@@ -58,7 +69,7 @@ assetsRouter.get("/tasks/:taskId/assets", async (c) => {
     FROM assets WHERE task_id = ${taskId}
   `;
 
-  return c.json(result);
+  return c.json(result.map(formatAsset));
 });
 
 // DELETE /assets/:assetId

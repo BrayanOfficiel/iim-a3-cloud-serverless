@@ -19,7 +19,14 @@ teamsRouter.get("/", async (c) => {
     WHERE tm.user_id = ${userId}
   `;
 
-  return c.json(result);
+  return c.json(
+    result.map((t) => ({
+      id: t.id,
+      name: t.name,
+      createdBy: t.created_by,
+      createdAt: t.created_at,
+    })),
+  );
 });
 
 // POST /teams
@@ -41,7 +48,15 @@ teamsRouter.post(
       VALUES (${team.id}, ${userId})
     `;
 
-    return c.json(team, 201);
+    return c.json(
+      {
+        id: team.id,
+        name: team.name,
+        createdBy: team.created_by,
+        createdAt: team.created_at,
+      },
+      201,
+    );
   },
 );
 
@@ -53,7 +68,12 @@ teamsRouter.get("/:teamId", async (c) => {
     FROM teams WHERE id = ${teamId}
   `;
   if (!team) return c.json({ error: "Equipe introuvable" }, 404);
-  return c.json(team);
+  return c.json({
+    id: team.id,
+    name: team.name,
+    createdBy: team.created_by,
+    createdAt: team.created_at,
+  });
 });
 
 // GET /teams/:teamId/members (enrichi Cognito)

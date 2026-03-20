@@ -7,6 +7,16 @@ import { authMiddleware } from "../middleware/auth";
 const projectsRouter = new Hono();
 projectsRouter.use("*", authMiddleware);
 
+function formatProject(row: Record<string, unknown>) {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description ?? null,
+    teamId: row.team_id,
+    createdAt: row.created_at,
+  };
+}
+
 // POST /teams/:teamId/projects
 projectsRouter.post(
   "/teams/:teamId/projects",
@@ -27,7 +37,7 @@ projectsRouter.post(
       RETURNING id, name, description, team_id, created_at
     `;
 
-    return c.json(project, 201);
+    return c.json(formatProject(project), 201);
   },
 );
 
@@ -40,7 +50,7 @@ projectsRouter.get("/teams/:teamId/projects", async (c) => {
     FROM projects WHERE team_id = ${teamId}
   `;
 
-  return c.json(result);
+  return c.json(result.map(formatProject));
 });
 
 // GET /projects/:projectId
@@ -53,7 +63,7 @@ projectsRouter.get("/projects/:projectId", async (c) => {
   `;
 
   if (!project) return c.json({ error: "Projet introuvable" }, 404);
-  return c.json(project);
+  return c.json(formatProject(project));
 });
 
 // PATCH /projects/:projectId
@@ -70,7 +80,6 @@ projectsRouter.patch(
     const projectId = c.req.param("projectId");
     const data = c.req.valid("json");
 
-    // Mise a jour avec COALESCE pour ne modifier que les champs fournis
     const [updated] = await sql`
       UPDATE projects SET
         name = COALESCE(${data.name ?? null}, name),
@@ -80,7 +89,7 @@ projectsRouter.patch(
     `;
 
     if (!updated) return c.json({ error: "Projet introuvable" }, 404);
-    return c.json(updated);
+    return c.json(formatProject(updated));
   },
 );
 

@@ -7,6 +7,18 @@ import { authMiddleware } from "../middleware/auth";
 const tasksRouter = new Hono();
 tasksRouter.use("*", authMiddleware);
 
+function formatTask(row: Record<string, unknown>) {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description ?? null,
+    status: row.status,
+    projectId: row.project_id,
+    assigneeId: row.assignee_id ?? null,
+    createdAt: row.created_at,
+  };
+}
+
 // POST /projects/:projectId/tasks
 tasksRouter.post(
   "/projects/:projectId/tasks",
@@ -28,7 +40,7 @@ tasksRouter.post(
       RETURNING id, name, description, status, project_id, assignee_id, created_at
     `;
 
-    return c.json(task, 201);
+    return c.json(formatTask(task), 201);
   },
 );
 
@@ -41,7 +53,7 @@ tasksRouter.get("/projects/:projectId/tasks", async (c) => {
     FROM tasks WHERE project_id = ${projectId}
   `;
 
-  return c.json(result);
+  return c.json(result.map(formatTask));
 });
 
 // GET /tasks/:taskId
@@ -54,7 +66,7 @@ tasksRouter.get("/tasks/:taskId", async (c) => {
   `;
 
   if (!task) return c.json({ error: "Tache introuvable" }, 404);
-  return c.json(task);
+  return c.json(formatTask(task));
 });
 
 // PATCH /tasks/:taskId
@@ -84,7 +96,7 @@ tasksRouter.patch(
     `;
 
     if (!updated) return c.json({ error: "Tache introuvable" }, 404);
-    return c.json(updated);
+    return c.json(formatTask(updated));
   },
 );
 
@@ -103,7 +115,7 @@ tasksRouter.patch(
     `;
 
     if (!updated) return c.json({ error: "Tache introuvable" }, 404);
-    return c.json(updated);
+    return c.json(formatTask(updated));
   },
 );
 
@@ -125,7 +137,7 @@ tasksRouter.patch(
     `;
 
     if (!updated) return c.json({ error: "Tache introuvable" }, 404);
-    return c.json(updated);
+    return c.json(formatTask(updated));
   },
 );
 

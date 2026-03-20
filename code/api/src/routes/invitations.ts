@@ -9,6 +9,18 @@ import { authMiddleware } from "../middleware/auth";
 const invitationsRouter = new Hono();
 invitationsRouter.use("*", authMiddleware);
 
+function formatInvitation(row: Record<string, unknown>) {
+  return {
+    id: row.id,
+    teamId: row.team_id,
+    teamName: row.team_name ?? null,
+    invitedEmail: row.invited_email,
+    invitedBy: row.invited_by,
+    status: row.status,
+    createdAt: row.created_at,
+  };
+}
+
 // POST /teams/:teamId/invitations
 invitationsRouter.post(
   "/teams/:teamId/invitations",
@@ -38,7 +50,7 @@ invitationsRouter.post(
       console.error("Erreur envoi email SES:", err);
     }
 
-    return c.json(invitation, 201);
+    return c.json(formatInvitation(invitation), 201);
   },
 );
 
@@ -55,10 +67,9 @@ invitationsRouter.get("/invitations", async (c) => {
     FROM invitations i
     LEFT JOIN teams t ON i.team_id = t.id
     WHERE i.invited_email = ${cognitoUser.email}
-      AND i.status = 'pending'
   `;
 
-  return c.json(result);
+  return c.json(result.map(formatInvitation));
 });
 
 // POST /invitations/:id/accept
@@ -79,7 +90,7 @@ invitationsRouter.post("/invitations/:id/accept", async (c) => {
     VALUES (${invitation.team_id}, ${userId})
   `;
 
-  return c.json(invitation);
+  return c.json(formatInvitation(invitation));
 });
 
 // POST /invitations/:id/reject
@@ -93,7 +104,7 @@ invitationsRouter.post("/invitations/:id/reject", async (c) => {
   `;
 
   if (!invitation) return c.json({ error: "Invitation introuvable" }, 404);
-  return c.json(invitation);
+  return c.json(formatInvitation(invitation));
 });
 
 export default invitationsRouter;

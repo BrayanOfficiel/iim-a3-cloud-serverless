@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
+import PurgeButton from "./components/PurgeButton";
 import AdminTeamDetail from "./pages/AdminTeamDetail";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -28,6 +29,7 @@ export default function App() {
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/teams/:teamId" element={<AdminTeamDetail />} />
                 </Routes>
+                <PurgeButton />
               </Layout>
             </ProtectedRoute>
           }

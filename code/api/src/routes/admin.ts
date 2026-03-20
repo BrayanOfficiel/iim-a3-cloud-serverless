@@ -1,3 +1,8 @@
+import {
+  AdminDeleteUserCommand,
+  CognitoIdentityProviderClient,
+  ListUsersCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { getUserByEmail, getUserBySub } from "launchpad-domain/cognito";
@@ -60,7 +65,14 @@ adminRouter.get("/teams", async (c) => {
   const result = await sql`
     SELECT id, name, created_by, created_at FROM teams
   `;
-  return c.json(result);
+  return c.json(
+    result.map((t) => ({
+      id: t.id,
+      name: t.name,
+      createdBy: t.created_by,
+      createdAt: t.created_at,
+    })),
+  );
 });
 
 // GET /admin/teams/:teamId
@@ -70,7 +82,12 @@ adminRouter.get("/teams/:teamId", async (c) => {
     SELECT id, name, created_by, created_at FROM teams WHERE id = ${teamId}
   `;
   if (!team) return c.json({ error: "Equipe introuvable" }, 404);
-  return c.json(team);
+  return c.json({
+    id: team.id,
+    name: team.name,
+    createdBy: team.created_by,
+    createdAt: team.created_at,
+  });
 });
 
 // PATCH /admin/teams/:teamId
@@ -85,7 +102,12 @@ adminRouter.patch(
       RETURNING id, name, created_by, created_at
     `;
     if (!updated) return c.json({ error: "Equipe introuvable" }, 404);
-    return c.json(updated);
+    return c.json({
+      id: updated.id,
+      name: updated.name,
+      createdBy: updated.created_by,
+      createdAt: updated.created_at,
+    });
   },
 );
 
@@ -170,7 +192,15 @@ adminRouter.get("/teams/:teamId/projects", async (c) => {
     SELECT id, name, description, team_id, created_at
     FROM projects WHERE team_id = ${teamId}
   `;
-  return c.json(result);
+  return c.json(
+    result.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      teamId: p.team_id,
+      createdAt: p.created_at,
+    })),
+  );
 });
 
 // DELETE /admin/projects/:id
@@ -186,7 +216,47 @@ adminRouter.get("/backups", async (c) => {
     SELECT id, filename, s3_key, created_at
     FROM backups ORDER BY created_at DESC
   `;
-  return c.json(result);
+  return c.json(
+    result.map((b) => ({
+      id: b.id,
+      filename: b.filename,
+      s3Key: b.s3_key,
+      createdAt: b.created_at,
+    })),
+  );
+});
+
+// POST /admin/purge -- Purge toute la BDD + Cognito
+adminRouter.post("/purge", async (c) => {
+  // Recuperer tous les user IDs en BDD
+  const users = await sql`SELECT id FROM users`;
+
+  // Supprimer chaque utilisateur de Cognito
+  const cognito = new CognitoIdentityProviderClient({
+    region: process.env.AWS_REGION ?? "eu-west-3",
+  });
+  const userPoolId = process.env.COGNITO_USER_POOL_ID ?? "";
+
+  for (const user of users) {
+    try {
+      await cognito.send(
+        new AdminDeleteUserCommand({
+          UserPoolId: userPoolId,
+          Username: user.id,
+        }),
+      );
+    } catch (err) {
+      console.error(`Erreur suppression Cognito ${user.id}:`, err);
+    }
+  }
+
+  // Purge BDD
+  await sql`TRUNCATE assets, tasks, projects, invitations, team_members, teams, users CASCADE`;
+
+  return c.json({
+    success: true,
+    message: "Base de donnees et Cognito purges",
+  });
 });
 
 export default adminRouter;

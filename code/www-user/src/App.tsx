@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Layout from "./components/Layout";
+import PurgeButton from "./components/PurgeButton";
 import { UserProvider } from "./context/UserContext";
 import Dashboard from "./pages/Dashboard";
 import Invitations from "./pages/Invitations";
@@ -34,6 +35,7 @@ export default function App() {
                     <Route path="/invitations" element={<Invitations />} />
                     <Route path="/profile" element={<Profile />} />
                   </Routes>
+                  <PurgeButton />
                 </Layout>
               </UserProvider>
             </ProtectedRoute>
